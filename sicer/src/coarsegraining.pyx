@@ -8,9 +8,6 @@ from math import *
 
 import numpy as np
 
-# From SICER package
-from sicer.lib import GenomeData
-
 
 '''version 8: 3-phase coarse graining, take the phase that has most 1 to next step. '''
 
@@ -253,7 +250,7 @@ def filter_and_find_islands(args, min_tag_count, chrom):
 	print_return = ''
 	total_count_island = 0
 	if (len(chrom_windows) > 0):
-		chrom_lengths = GenomeData.species_chrom_lengths[args.species][chrom]
+		chrom_lengths = args.species_chrom_lengths[chrom]
 		eligible_start_list = []
 
 		for i in range(0, len(chrom_windows)):
@@ -284,11 +281,11 @@ def main(args, read_count, pool):
 	print("Coarse graining step: %d" % args.step_size)
 	print("Coarse graining score: %d " % args.step_score)
 
-	chroms = GenomeData.species_chroms[args.species]
+	chroms = args.species_chroms
 	total_read_count = read_count
 	print("Total read count: %d" % total_read_count)
 
-	genome_length = sum(GenomeData.species_chrom_lengths[args.species].values());
+	genome_length = sum(args.species_chrom_lengths.values());
 	effective_genome_length = int(args.effective_genome_fraction * genome_length);
 
 	average = float(total_read_count) * args.window_size / effective_genome_length;

@@ -6802,7 +6802,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_18filter_and_find_islands
  * 	print_return = ''
  * 	total_count_island = 0             # <<<<<<<<<<<<<<
  * 	if (len(chrom_windows) > 0):
- * 		chrom_lengths = GenomeData.species_chrom_lengths[args.species][chrom]
+ * 		chrom_lengths = args.species_chrom_lengths[chrom]
  */
   __pyx_v_total_count_island = 0;
 
@@ -6810,7 +6810,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_18filter_and_find_islands
  * 	print_return = ''
  * 	total_count_island = 0
  * 	if (len(chrom_windows) > 0):             # <<<<<<<<<<<<<<
- * 		chrom_lengths = GenomeData.species_chrom_lengths[args.species][chrom]
+ * 		chrom_lengths = args.species_chrom_lengths[chrom]
  * 		eligible_start_list = []
  */
   __pyx_t_5 = PyObject_Length(__pyx_v_chrom_windows); if (unlikely(__pyx_t_5 == ((Py_ssize_t)-1))) __PYX_ERR(0, 255, __pyx_L1_error)
@@ -6820,7 +6820,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_18filter_and_find_islands
     /* "sicer/src/coarsegraining.pyx":256
  * 	total_count_island = 0
  * 	if (len(chrom_windows) > 0):
- * 		chrom_lengths = GenomeData.species_chrom_lengths[args.species][chrom]             # <<<<<<<<<<<<<<
+ * 		chrom_lengths = args.species_chrom_lengths[chrom]             # <<<<<<<<<<<<<<
  * 		eligible_start_list = []
  * 
  */
@@ -6843,7 +6843,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_18filter_and_find_islands
 
     /* "sicer/src/coarsegraining.pyx":257
  * 	if (len(chrom_windows) > 0):
- * 		chrom_lengths = GenomeData.species_chrom_lengths[args.species][chrom]
+ * 		chrom_lengths = args.species_chrom_lengths[chrom]
  * 		eligible_start_list = []             # <<<<<<<<<<<<<<
  * 
  * 		for i in range(0, len(chrom_windows)):
@@ -7280,7 +7280,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_18filter_and_find_islands
  * 	print_return = ''
  * 	total_count_island = 0
  * 	if (len(chrom_windows) > 0):             # <<<<<<<<<<<<<<
- * 		chrom_lengths = GenomeData.species_chrom_lengths[args.species][chrom]
+ * 		chrom_lengths = args.species_chrom_lengths[chrom]
  * 		eligible_start_list = []
  */
   }
@@ -7524,7 +7524,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_20main(CYTHON_UNUSED PyOb
  * 	print("Coarse graining step: %d" % args.step_size)
  * 	print("Coarse graining score: %d " % args.step_score)             # <<<<<<<<<<<<<<
  * 
- * 	chroms = GenomeData.species_chroms[args.species]
+ * 	chroms = args.species_chroms
  */
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_args, __pyx_n_s_step_score); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -7537,7 +7537,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_20main(CYTHON_UNUSED PyOb
   /* "sicer/src/coarsegraining.pyx":287
  * 	print("Coarse graining score: %d " % args.step_score)
  * 
- * 	chroms = GenomeData.species_chroms[args.species]             # <<<<<<<<<<<<<<
+ * 	chroms = args.species_chroms             # <<<<<<<<<<<<<<
  * 	total_read_count = read_count
  * 	print("Total read count: %d" % total_read_count)
  */
@@ -7557,7 +7557,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_20main(CYTHON_UNUSED PyOb
 
   /* "sicer/src/coarsegraining.pyx":288
  * 
- * 	chroms = GenomeData.species_chroms[args.species]
+ * 	chroms = args.species_chroms
  * 	total_read_count = read_count             # <<<<<<<<<<<<<<
  * 	print("Total read count: %d" % total_read_count)
  * 
@@ -7566,11 +7566,11 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_20main(CYTHON_UNUSED PyOb
   __pyx_v_total_read_count = __pyx_v_read_count;
 
   /* "sicer/src/coarsegraining.pyx":289
- * 	chroms = GenomeData.species_chroms[args.species]
+ * 	chroms = args.species_chroms
  * 	total_read_count = read_count
  * 	print("Total read count: %d" % total_read_count)             # <<<<<<<<<<<<<<
  * 
- * 	genome_length = sum(GenomeData.species_chrom_lengths[args.species].values());
+ * 	genome_length = sum(args.species_chrom_lengths.values());
  */
   __pyx_t_3 = __Pyx_PyString_FormatSafe(__pyx_kp_s_Total_read_count_d, __pyx_v_total_read_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -7580,7 +7580,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_20main(CYTHON_UNUSED PyOb
   /* "sicer/src/coarsegraining.pyx":291
  * 	print("Total read count: %d" % total_read_count)
  * 
- * 	genome_length = sum(GenomeData.species_chrom_lengths[args.species].values());             # <<<<<<<<<<<<<<
+ * 	genome_length = sum(args.species_chrom_lengths.values());             # <<<<<<<<<<<<<<
  * 	effective_genome_length = int(args.effective_genome_fraction * genome_length);
  * 
  */
@@ -7621,7 +7621,7 @@ static PyObject *__pyx_pf_5sicer_3src_14coarsegraining_20main(CYTHON_UNUSED PyOb
 
   /* "sicer/src/coarsegraining.pyx":292
  * 
- * 	genome_length = sum(GenomeData.species_chrom_lengths[args.species].values());
+ * 	genome_length = sum(args.species_chrom_lengths.values());
  * 	effective_genome_length = int(args.effective_genome_fraction * genome_length);             # <<<<<<<<<<<<<<
  * 
  * 	average = float(total_read_count) * args.window_size / effective_genome_length;

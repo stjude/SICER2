@@ -10,7 +10,6 @@ from math import *
 import numpy as np
 
 from sicer.lib import Background_island_probscore_statistics
-from sicer.lib import GenomeData
 
 """
 Take in coords for bed_gaph type summary files and find 'islands' of modifications.
@@ -156,9 +155,8 @@ def main(args, total_read_count, pool):
     print("Gap size: ", args.gap_size);
     print("E value is:", args.e_value);
     print("Total read count:", total_read_count)
-    chroms = GenomeData.species_chroms[
-        args.species];  # list of chromsomes for the given species (e.g. chr1, chr2, ... , chrx)
-    genome_length = sum(GenomeData.species_chrom_lengths[args.species].values());  # list of length of each chromsomes
+    chroms = args.species_chroms;  # list of chromsomes for the given species (e.g. chr1, chr2, ... , chrx)
+    genome_length = sum(args.species_chrom_lengths.values());  # list of length of each chromsomes
     effective_genome_length = int(args.effective_genome_fraction * genome_length);
     average = float(total_read_count) * args.window_size / effective_genome_length;  # average read count
 

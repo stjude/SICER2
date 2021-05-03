@@ -44,9 +44,17 @@ def main():
     parser.add_argument(
         '--species',
         '-s',
-        required=True,
+        required=False,
         type=str,
         help='The species/genome used (ex: hg38)'
+    )
+
+    parser.add_argument(
+        '--species_chromfile',
+        '-sc',
+        required=False,
+        type=str,
+        help='The species/genome chrom sizes file'
     )
 
     parser.add_argument(
@@ -198,9 +206,23 @@ def main():
                     sys.exit(1)
             args.control_file = bed_file_name
 
-    if (not (args.species in GenomeData.species_chroms.keys())):
-        sys.stderr.write("Error: Species " + args.species + " not recognized.\n")
+    if (not(args.species_chromfile) and not(args.species)):
+        sys.stderr.write("Error: Species information is not provided or not recognized.\n")
         sys.exit(1)
+
+    if (args.species_chromfile is not None):
+        if (not (Utility.fileExists(args.species_chromfile))):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), args.species_chromfile)
+            sys.exit(1)
+        args.species_chroms, args.species_chrom_lengths = Utility.chroms_sizes(args.species_chromfile)
+
+    if (args.species_chromfile is None):
+        if (not (args.species in GenomeData.species_chroms.keys())):
+            sys.stderr.write("Error: Species " + args.species + " not recognized.\n")
+            sys.exit(1)
+        else:
+            args.species_chroms = GenomeData.species_chroms[args.species]
+            args.species_chrom_lengths = GenomeData.species_chrom_lengths[args.species]
 
     if (not (args.effective_genome_fraction <= 1 and args.effective_genome_fraction >= 0)):
         sys.stderr.write("Error: Effective genome fraction must be a value between 0 and 1.\n")

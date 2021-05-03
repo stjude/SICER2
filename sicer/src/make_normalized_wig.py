@@ -7,9 +7,6 @@ from math import *
 
 import numpy as np
 
-from sicer.lib import GenomeData
-
-
 def get_counts(graph_file):
     chrom_graph = np.load(graph_file, allow_pickle=True)
     count = 0
@@ -19,7 +16,7 @@ def get_counts(graph_file):
 
 
 def main(args, output_file_name, pool):
-    chroms = GenomeData.species_chroms[args.species];
+    chroms = args.species_chroms;
     scaling_factor = 1000000
     total_count = 0  # total count of islands
     file = args.treatment_file.replace('.bed', '')

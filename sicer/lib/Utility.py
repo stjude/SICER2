@@ -185,3 +185,18 @@ def extract_two_columns(gene_file, c1, c2, outfile):
         ofile.write(outline);
     ofile.close();
     file.close();
+
+def chroms_sizes(species):
+    """
+    process chroms_sizes from chrom_sizes files
+    Return list and dict of chroms and chrom lengths
+    """
+    species_chroms = []
+    species_chrom_lengths = {}
+    species_file = open(species, 'r')
+    for line in species_file:
+        line = line.strip().split()
+        species_chroms.append(line[0])
+        species_chrom_lengths[line[0]] = int(line[1])
+    species_file.close()
+    return(species_chroms, species_chrom_lengths)

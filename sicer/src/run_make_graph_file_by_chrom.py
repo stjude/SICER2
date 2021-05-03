@@ -8,9 +8,6 @@ from math import *
 import sys
 import numpy as np
 
-from sicer.lib import GenomeData
-
-
 def get_bed_coords(chrom_reads, chrom_length, fragment_size, chrom, verbose):
     """
     *This takes into account the identical tags
@@ -161,8 +158,8 @@ def makeGraphFile(args, filtered, chrom, chrom_length):
 
 
 def main(args, pool, filtered=False):
-    chroms = GenomeData.species_chroms[args.species]
-    chrom_lengths = GenomeData.species_chrom_lengths[args.species]
+    chroms = args.species_chroms
+    chrom_lengths = args.species_chrom_lengths
 
     list_of_args = []
     for i, chrom in enumerate(chroms):

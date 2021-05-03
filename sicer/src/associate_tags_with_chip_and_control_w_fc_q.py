@@ -11,7 +11,6 @@ import numpy as np
 import scipy
 import scipy.stats
 
-from sicer.lib import GenomeData;
 from sicer.lib import associate_tags_with_regions
 
 
@@ -78,8 +77,8 @@ def associate_tag_count_to_regions(args, scaling_factor, control_library_size, g
 
 
 def main(args, chip_library_size, control_library_size, pool):
-    chroms = GenomeData.species_chroms[args.species];
-    genomesize = sum(GenomeData.species_chrom_lengths[args.species].values());
+    chroms = args.species_chroms;
+    genomesize = sum(arg.species_chrom_lengths.values());
     genomesize = args.effective_genome_fraction * genomesize;
 
     print("ChIP library read count:", chip_library_size)

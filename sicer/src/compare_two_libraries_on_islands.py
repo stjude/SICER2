@@ -12,7 +12,6 @@ from math import *
 import numpy as np
 import scipy.stats
 
-from sicer.lib import GenomeData
 from sicer.lib import Utility
 from sicer.lib import associate_tags_with_regions
 
@@ -111,7 +110,7 @@ def associate_tags_count_to_regions(args, path_A, path_B, scaling_factor, chrom)
 
 
 def main(args, path_to_tempdir_1, path_to_tempdir_2, A_library_size, B_library_size, pool):
-    chroms = GenomeData.species_chroms[args.species]
+    chroms = args.species_chroms
 
     print("Library size of ", args.treatment_file[0], ":  ", A_library_size)
     print("Library size of ", args.treatment_file[1], ":  ", B_library_size)

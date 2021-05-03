@@ -9,8 +9,6 @@ from math import *
 
 import numpy as np
 
-from sicer.lib import GenomeData
-
 
 def filter_by_fdr_SICER(args, chrom):
     file_name = args.treatment_file.replace('.bed', '') + '_' + chrom + '_island_summary.npy'
@@ -45,7 +43,7 @@ def filter_by_fdr_SICER_df(args, columnindex, chrom):
 
 
 def main(args, columnindex, pool):
-    chroms = GenomeData.species_chroms[args.species];
+    chroms = args.species_chroms;
     total_island_count = 0
     total_read_count = 0
 
