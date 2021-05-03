@@ -12,7 +12,6 @@ import multiprocessing as mp
 curr_path = os.getcwd()
 
 # From SICER Package
-from sicer.lib import GenomeData
 from sicer.main import run_RECOGNICER
 from sicer.src import find_union_islands
 from sicer.src import compare_two_libraries_on_islands
@@ -53,7 +52,7 @@ def main(args):
             "Temporary directory required for SICER cannot be created. Check if directories can be created in %s."
             % curr_path)
     try:
-        num_chroms = len(GenomeData.species_chroms[args.species])
+        num_chroms = len(args.species_chroms)
         pool = mp.Pool(processes=min(args.cpu, num_chroms))
 
         # Find the union island between two treatment files. It will generate a summary file
