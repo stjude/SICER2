@@ -11,7 +11,6 @@ import multiprocessing as mp
 curr_path = os.getcwd()
 
 # From SICER Package
-from sicer.lib import GenomeData
 from sicer.src import remove_redundant_reads
 from sicer.src import run_make_graph_file_by_chrom
 from sicer.src import find_islands_in_pr
@@ -41,7 +40,7 @@ def main(args, df_run=False):
             "Temporary directory required for SICER cannot be created. Check if directories can be created in %s." % curr_path)
     try:
         # Step 0: create Pool object for parallel-Processing
-        num_chroms = len(GenomeData.species_chroms[args.species])
+        num_chroms = len(args.species_chroms)
         pool = mp.Pool(processes=min(args.cpu, num_chroms))
 
         # Step 1: Remove redundancy reads in input file according to input threshold

@@ -10,9 +10,6 @@ from math import *
 
 import numpy as np
 
-from sicer.lib import GenomeData
-
-
 # Function designed for handling multiprocessing. Executes the redundancy removal algorithm
 # for each independent chromosome
 def find_union_islands(no_control, temp_dir_1, temp_dir_2, chrom):
@@ -55,7 +52,7 @@ def find_union_islands(no_control, temp_dir_1, temp_dir_2, chrom):
 
 
 def main(args, temp_dir_1, temp_dir_2, pool):
-    chroms = GenomeData.species_chroms[args.species]
+    chroms = args.species_chroms
 
     # Partially fill out the full directory of the files we want to access
     temp_dir_1 += '/' + args.treatment_file[0].replace('.bed', '')

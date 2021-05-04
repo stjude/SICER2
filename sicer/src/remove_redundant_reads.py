@@ -10,8 +10,6 @@ import subprocess
 from functools import partial
 import numpy as np
 
-from sicer.lib import GenomeData
-
 '''Filters redundant reads according to the cutoff value by taking a sorted list and comparing adjacent reads'''
 
 
@@ -138,7 +136,7 @@ def find_and_filter_reads(path_to_file, cutoff, chrom):
 
 
 def main(args, path_to_file, pool):
-    chroms = GenomeData.species_chroms[args.species];  # list of chromsomes of the given species
+    chroms = args.species_chroms;  # list of chromsomes of the given species
     cutoff = args.redundancy_threshold
 
     # Use multiprocessing module to run parallel processes for each chromosome
