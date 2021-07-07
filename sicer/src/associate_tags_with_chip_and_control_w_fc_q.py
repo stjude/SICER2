@@ -78,7 +78,7 @@ def associate_tag_count_to_regions(args, scaling_factor, control_library_size, g
 
 def main(args, chip_library_size, control_library_size, pool):
     chroms = args.species_chroms;
-    genomesize = sum(arg.species_chrom_lengths.values());
+    genomesize = sum(args.species_chrom_lengths.values());
     genomesize = args.effective_genome_fraction * genomesize;
 
     print("ChIP library read count:", chip_library_size)
