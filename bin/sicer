@@ -122,8 +122,8 @@ def main():
         '--e_value',
         '-e',
         required=False,
-        type=int,
-        default=1000,
+        type=float,
+        default=1000.0,
         help='E-value. Requires user input when no control library is provided. Default value is 1000'
     )
 
