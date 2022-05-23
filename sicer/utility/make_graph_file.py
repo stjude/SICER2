@@ -94,7 +94,7 @@ def get_bed_coords(file, chrom_length, fragment_size):
                         position = chrom_length - 1;
                     taglist.append(position);
                     postive_tag_counts += 1.0
-                    elif minus.match(sline[5]):
+                elif minus.match(sline[5]):
                     position = int(sline[2]) - 1 - shift;
                     # in case the shift move the positions
                     # beyond zero, use zero
@@ -209,3 +209,4 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv)
+
