@@ -49,12 +49,14 @@ def main(args, df_run=False):
         num_chroms = len(args.species_chroms)
         pool = mp.Pool(processes=min(args.cpu, num_chroms))
 
-        if args.treatment_file.lower().endswith('.bedpe'):
+        if args.paired_end == True:
 
             # Step 1-PE: creating bed windows
+            print("Creating bed windows... \n")
             run_create_bed_windows.main(args, pool) #make windows
 
             # Step 2-PE: Converting the bedpe to graph windows
+            print("Create graph bin based on pre-defined bin size %s (bp)... \n" % args.bin_size)
             treatment_file_name = os.path.basename(args.treatment_file)
             total_tag_in_windows = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
             args.treatment_file = treatment_file_name

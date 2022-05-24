@@ -5,27 +5,13 @@ import sys
 import re
 import numpy as np
 
-def separate_bedpe_chroms(file, chrom):
+def graph_bins_chrom(file, chrom):
     file_name = os.path.basename(file)
-    file_name = file_name.replace('.bedpe', '')
-
-    match = chrom + "[[:space:]]"
-    syntax = 'grep %s %s > %s_%s-results.bed' % (match, file, file_name, chrom)
-    subprocess.Popen(syntax, stdin=subprocess.PIPE, shell=True,)
-
-    print("Cleaning BEDPE file for chrom %s..." % (chrom))
-    awkcommand = 'awk -F\\\\t \'{if($1==$4 && $1~"chr" && $6-$2<1000) { print $1 "\\t" $2 "\\t" $6 "\\t" $7 } }\''
-
-    new_file_name = file_name + '_' + chrom
-    process = subprocess.Popen("%s %s-results.bed > %s-cleaned_bedpe.bed" % (awkcommand, new_file_name, new_file_name), stdin=subprocess.PIPE, shell=True,)
-    process.communicate()
-    if process.returncode != 0:
-        sys.stderr.write("Error: Cannot clean bedpe file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
-        sys.exit(1)
+    file_name = file_name.replace('.bed', '')
+    new_file_name = file_name + '_' + chrom + '-results.bed'
 
     windows = chrom + '.windows'
-    cleaned = new_file_name + '-cleaned_bedpe.bed'
-    graph_reads = subprocess.Popen(['intersectBed', '-c', '-a', windows, '-b', cleaned], stdout=subprocess.PIPE)
+    graph_reads = subprocess.Popen(['bedtools', 'intersect', '-c', '-a', windows, '-b', new_file_name], stdout=subprocess.PIPE)
     chrom_reads = str(graph_reads.communicate()[0], 'utf-8').splitlines()
 
     chrom_graph = []
@@ -57,10 +43,11 @@ def separate_bedpe_chroms(file, chrom):
 
 def main(args, file, pool):
     chroms = args.species_chroms
-    separate_chroms_partial = partial(separate_bedpe_chroms, file)
-
-    tag_counts = pool.map(separate_chroms_partial, chroms)
+    graph_bins_chrom_partial = partial(graph_bins_chrom,file)
+    tag_counts = pool.map(graph_bins_chrom_partial, chroms)
+    total_tag_count = 0
     for result in tag_counts:
         total_tag_count += result
 
     return total_tag_count
+

@@ -261,19 +261,19 @@ def main():
                         sys.exit(1)
                 args.control_file = bed_file_name
 
-    if args.control_file.lower().endswith('.bedpe'):
-        args.paired_end == True
-        bed_file_name = args.control_file.replace('.bedpe', '.pe.bed')
-        if not Utility.fileExists(bed_file_name):
-            process =  subprocess.Popen("awk -F\\t '{if($1==$4 && $1~\"chr\" && $6-$2<1000){ print $1 \"\t\" $2 \"\t\" $6 \"\t\" $7}}' %s > %s" % (args.control_file, bed_file_name),
-                                stdin=subprocess.PIPE,
-                                shell=True,
-                                )
-            process.communicate()
-            if process.returncode != 0:
-                sys.stderr.write("Error: Cannot clean BEDPE file.\n")
-                sys.exit(1)
-        args.control_file = bed_file_name
+        if args.control_file.lower().endswith('.bedpe'):
+            args.paired_end == True
+            bed_file_name = args.control_file.replace('.bedpe', '.pe.bed')
+            if not Utility.fileExists(bed_file_name):
+                process =  subprocess.Popen("awk -F\\t '{if($1==$4 && $1~\"chr\" && $6-$2<1000){ print $1 \"\t\" $2 \"\t\" $6 \"\t\" $7}}' %s > %s" % (args.control_file, bed_file_name),
+                                    stdin=subprocess.PIPE,
+                                    shell=True,
+                                    )
+                process.communicate()
+                if process.returncode != 0:
+                    sys.stderr.write("Error: Cannot clean BEDPE file.\n")
+                    sys.exit(1)
+            args.control_file = bed_file_name
 
     if not args.species_chromfile and not args.species:
         sys.stderr.write("Error: Species information is not provided or not recognized.\n")
