@@ -13,7 +13,7 @@ curr_path = os.getcwd()
 # From SICER Package
 from sicer.src import remove_redundant_reads
 from sicer.src import run_make_graph_file_by_chrom
-from sicer.src import run_create_bed_windows
+from sicer.src import create_bed_windows
 from sicer.src import process_and_clean_bedpe
 from sicer.src import import_graph_file_by_chrom
 from sicer.src import find_islands_in_pr
@@ -53,11 +53,12 @@ def main(args, df_run=False):
 
             # Step 1-PE: creating bed windows
             print("Creating bed windows... \n")
-            run_create_bed_windows.main(args, pool) #make windows
+            create_bed_windows.main(args, pool) #make windows
 
             # Step 2-PE: Converting the bedpe to graph windows
             print("Create graph bin based on pre-defined bin size %s (bp)... \n" % args.bin_size)
             treatment_file_name = os.path.basename(args.treatment_file)
+            separate_bedpe_chroms.main(args, args.treatment_file, pool)
             total_tag_in_windows = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
             args.treatment_file = treatment_file_name
             total_treatment_read_count = total_tag_in_windows
@@ -66,6 +67,7 @@ def main(args, df_run=False):
             if control_lib_exists:
                 control_file_name = os.path.basename(args.control_file)
                 print("Use the", control_file_name, "control graph file... \n")
+                separate_bedpe_chroms.main(args, args.treatment_file, pool)
                 total_control_read_count = process_and_clean_bedpe.main(args, args.control_file, pool)
                 args.control_file = control_file_name
                 print('\n')

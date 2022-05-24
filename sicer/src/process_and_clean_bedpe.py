@@ -40,9 +40,9 @@ def graph_bins_chrom(file, chrom):
 
     return tag_count
 
-
 def main(args, file, pool):
     chroms = args.species_chroms
+    
     graph_bins_chrom_partial = partial(graph_bins_chrom,file)
     tag_counts = pool.map(graph_bins_chrom_partial, chroms)
     total_tag_count = 0
@@ -50,4 +50,3 @@ def main(args, file, pool):
         total_tag_count += result
 
     return total_tag_count
-
