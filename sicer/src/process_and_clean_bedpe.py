@@ -11,6 +11,7 @@ def graph_bins_chrom(file, chrom):
     bed_file_name = file_name + '_' + chrom + '.npy'
     new_file_name = file_name + '_' + chrom + '-results.bed'
 
+    print_return = ""
     chrom_reads = np.load(bed_file_name, allow_pickle=True)
     with open(new_file_name, 'w') as outfile:
         for read in chrom_reads:
@@ -51,8 +52,8 @@ def graph_bins_chrom(file, chrom):
     np_chrom_reads = np.array(chrom_reads, dtype=object)
     np.save(file_save_name, np_chrom_reads)
 
-    print('Total count of ' + chrom + ' tags: ' + str(tag_count))
-    return tag_count
+    print_return += ('Total count of ' + chrom + ' tags: ' + str(tag_count))
+    return (print_return, tag_count)
 
 def main(args, file, pool):
     chroms = args.species_chroms
@@ -61,6 +62,7 @@ def main(args, file, pool):
     tag_counts = pool.map(graph_bins_chrom_partial, chroms)
     total_tag_count = 0
     for result in tag_counts:
-        total_tag_count += result
+        print(result[0])
+        total_tag_count += result[1]
 
     return total_tag_count
