@@ -155,7 +155,7 @@ def main(args, total_read_count, pool):
         print("Bin size:", args.bin_size)
     else:
         print("Fragments size:", args.fragment_size)
-    print("Window_size: ", args.window_size)
+    print("Window size: ", args.window_size)
     print("Gap size: ", args.gap_size)
     print("E value is:", args.e_value)
     print("Total read count:", total_read_count)
@@ -222,4 +222,3 @@ def main(args, total_read_count, pool):
                 outfile.write(line)
 
     print("Total number of islands: ", total_number_islands)
-

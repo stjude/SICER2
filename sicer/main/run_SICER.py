@@ -69,14 +69,15 @@ def main(args, df_run=False):
                 print("Preprocess the", control_file_name, "file...\n")
                 total_control_read_count = separate_bedpe_chroms.main(args, args.control_file, pool)
                 args.control_file = control_file_name
-                total_tag_in_windows = process_and_clean_bedpe.main(args, args.control_file, pool) #bedpe to graph
-                total_control_read_count = total_tag_in_windows[1]
+                results = process_and_clean_bedpe.main(args, args.control_file, pool) #bedpe to graph
+                total_control_read_count = results[1]
                 print('\n')
 
             print("Partition the genome and create graph files\n");
-            total_tag_in_windows = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
-            print(total_tag_in_windows[0])
-            total_treatment_read_count = total_tag_in_windows[1]
+            results = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
+            print(results[0])
+            total_tag_in_windows = results[1]
+            total_treatment_read_count = results[1]
             print('\n')
 
         else:
