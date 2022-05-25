@@ -14,6 +14,7 @@ curr_path = os.getcwd()
 from sicer.src import remove_redundant_reads
 from sicer.src import run_make_graph_file_by_chrom
 from sicer.src import create_bed_windows
+from sicer.src import separate_bedpe_chroms
 from sicer.src import process_and_clean_bedpe
 from sicer.src import import_graph_file_by_chrom
 from sicer.src import find_islands_in_pr
@@ -59,15 +60,20 @@ def main(args, df_run=False):
             print("Create graph bin based on pre-defined bin size %s (bp)... \n" % args.bin_size)
             treatment_file_name = os.path.basename(args.treatment_file)
             separate_bedpe_chroms.main(args, args.treatment_file, pool)
+            print('\n')
+
+            print("Partition the genome into bins and create graph files... \n")
             total_tag_in_windows = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
             args.treatment_file = treatment_file_name
             total_treatment_read_count = total_tag_in_windows
+            print('\n')
 
             # Step 3-PE: Using the control graph file
             if control_lib_exists:
                 control_file_name = os.path.basename(args.control_file)
                 print("Use the", control_file_name, "control graph file... \n")
                 separate_bedpe_chroms.main(args, args.treatment_file, pool)
+
                 total_control_read_count = process_and_clean_bedpe.main(args, args.control_file, pool)
                 args.control_file = control_file_name
                 print('\n')
@@ -94,7 +100,7 @@ def main(args, df_run=False):
             # Step 3-SE: Partition the genome in windows and generate graph files for each chromsome
             print("Partition the genome in windows and generate summary files... \n")
             total_tag_in_windows = run_make_graph_file_by_chrom.main(args, pool)
-            print("\n")
+            print('\n')
 
         # Step 4: Normalize and generate WIG file
         print("Normalizing graphs by total island filitered reads per million and generating summary WIG file...\n")
@@ -143,3 +149,4 @@ def main(args, df_run=False):
         if df_run == False:
             print("Removing temporary directory and all files in it.")
             #shutil.rmtree(temp_dir)
+

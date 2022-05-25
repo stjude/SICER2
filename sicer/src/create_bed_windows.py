@@ -3,7 +3,7 @@ import subprocess
 
 def create_bed_windows(chrom, chrom_length, bin):
     file_save_name = chrom + '.windows'
-    syntax = 'echo -e "%s\\t%s" > %s.temp ; bedtools makewindows -g %s.temp -w %s > %s ; rm -rf %s.temp' % (chrom, chrom_length, chrom, chrom, bin, file_save_name, chrom)
+    syntax = 'echo "%s\\t%s" > %s.temp ; bedtools makewindows -g %s.temp -w %s > %s ; rm -rf %s.temp' % (chrom, chrom_length, chrom, chrom, bin, file_save_name, chrom)
     subprocess.Popen(syntax, stdin=subprocess.PIPE, shell=True,)
 
 def main(args, pool):
