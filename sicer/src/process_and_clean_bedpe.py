@@ -51,7 +51,7 @@ def graph_bins_chrom(file, chrom):
     np_chrom_reads = np.array(chrom_data, dtype=object)
     np.save(file_save_name, np_chrom_reads)
 
-    print_return += ('Total count of ' + chrom + ' tags: ' + str(tag_count))
+    print_return += ('Total count of ' + chrom + ' tags: ' + str(tag_count) + '\n')
     return (print_return, tag_count)
 
 def main(args, file, pool):
@@ -62,7 +62,7 @@ def main(args, file, pool):
     total_tag_count = 0
     print_return = ""
     for result in tag_counts:
-        print_return += result[0] + '\n'
+        print_return += result[0]
         #print(result[0])
         total_tag_count += result[1]
 

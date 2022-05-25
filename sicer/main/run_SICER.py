@@ -39,7 +39,7 @@ def main(args, df_run=False):
         temp_dir = tempfile.mkdtemp()
         # Change current working directory to temp_dir
         os.chdir(temp_dir)
-        print(temp_dir)
+        #print(temp_dir)
 
     except:
         sys.exit(
@@ -119,6 +119,7 @@ def main(args, df_run=False):
             # Step 6
             print("Calculating significance of candidate islands using the control library... \n")
             associate_tags_with_chip_and_control_w_fc_q.main(args, total_treatment_read_count, total_control_read_count, pool)
+            print('\n')
 
             # Step 7: Filter out any significant islands whose pvalue is greater than the false discovery rate
             print("Identify significant islands using FDR criterion\n")
@@ -153,4 +154,4 @@ def main(args, df_run=False):
     finally:
         if df_run == False:
             print("Removing temporary directory and all files in it.")
-            #shutil.rmtree(temp_dir)
+            shutil.rmtree(temp_dir)
