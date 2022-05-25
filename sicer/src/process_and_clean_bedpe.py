@@ -20,7 +20,7 @@ def graph_bins_chrom(file, chrom):
             name = read[3]
             score = read[4]
             strand = read[5]
-            line=(chrom + '\t' + str(start) + '\t' + str(end) + '\t' + name + '\t' + str(score) + '\t' + strand)
+            line=(chrom + '\t' + str(start) + '\t' + str(end) + '\t' + name + '\t' + str(score) + '\t' + strand + '\n')
             outfile.write(line)
 
     windows = chrom + '.windows'
@@ -64,4 +64,3 @@ def main(args, file, pool):
         total_tag_count += result
 
     return total_tag_count
-

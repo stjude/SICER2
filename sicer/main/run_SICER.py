@@ -39,7 +39,7 @@ def main(args, df_run=False):
         temp_dir = tempfile.mkdtemp()
         # Change current working directory to temp_dir
         os.chdir(temp_dir)
-        print(temp_dir)
+        #print(temp_dir)
 
     except:
         sys.exit(
@@ -53,30 +53,26 @@ def main(args, df_run=False):
         if args.paired_end == True:
 
             # Step 1-PE: creating bed windows
-            print("Creating bed windows... \n")
+            print("Creating bed windows based on pre-defined bin size %s (bp)... \n" % args.bin_size)
             create_bed_windows.main(args, pool) #make windows
 
             # Step 2-PE: Converting the bedpe to graph windows
-            print("Create graph bin based on pre-defined bin size %s (bp)... \n" % args.bin_size)
             treatment_file_name = os.path.basename(args.treatment_file)
-            separate_bedpe_chroms.main(args, args.treatment_file, pool)
+            print("Preprocess the", treatment_file_name, "file...\n")
+            total_treatment_read_count = separate_bedpe_chroms.main(args, args.treatment_file, pool)
             print('\n')
+            # Step 3-PE: Using the control graph file
+            if control_lib_exists:
+                control_file_name = os.path.basename(args.control_file)
+                print("Preprocess the", control_file_name, "file...\n")
+                total_control_read_count = separate_bedpe_chroms.main(args, args.treatment_file, pool)
+                print('\n')
 
-            print("Partition the genome into bins and create graph files... \n")
+            print("Partition the genome and create graph files\n");
             total_tag_in_windows = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
             args.treatment_file = treatment_file_name
             total_treatment_read_count = total_tag_in_windows
             print('\n')
-
-            # Step 3-PE: Using the control graph file
-            if control_lib_exists:
-                control_file_name = os.path.basename(args.control_file)
-                print("Use the", control_file_name, "control graph file... \n")
-                separate_bedpe_chroms.main(args, args.treatment_file, pool)
-
-                total_control_read_count = process_and_clean_bedpe.main(args, args.control_file, pool)
-                args.control_file = control_file_name
-                print('\n')
 
         else:
             # Step 1-SE: Remove redundancy reads in input file according to input threshold
@@ -148,5 +144,4 @@ def main(args, df_run=False):
     finally:
         if df_run == False:
             print("Removing temporary directory and all files in it.")
-            #shutil.rmtree(temp_dir)
-
+            shutil.rmtree(temp_dir)

@@ -4,7 +4,12 @@ import subprocess
 def create_bed_windows(chrom, chrom_length, bin):
     file_save_name = chrom + '.windows'
     syntax = 'echo "%s\\t%s" > %s.temp ; bedtools makewindows -g %s.temp -w %s > %s ; rm -rf %s.temp' % (chrom, chrom_length, chrom, chrom, bin, file_save_name, chrom)
-    subprocess.Popen(syntax, stdin=subprocess.PIPE, shell=True,)
+    process = subprocess.Popen(syntax, stdin=subprocess.PIPE, shell=True,)
+    process.communicate()
+    if process.returncode != 0:
+        sys.stderr.write("Error: Cannot bedtools MAKEWINDOWS.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+        sys.exit(1)
+
 
 def main(args, pool):
     chroms = args.species_chroms
