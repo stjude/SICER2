@@ -36,20 +36,20 @@ def graph_bins_chrom(file, chrom):
         reads[2] = int(reads[2])
         reads[3] = int(reads[3])
         if reads[3] > 0:
-            output1 = reads
+            output1 = (chrom, reads[1], reads[2], 'placeholder', '255','+')
             output2 = (chrom, reads[1], reads[2], reads[3])
             chrom_data.append(output1)
             chrom_graph.append(output2)
             tag_count += reads[3]
 
-    #file_save_name = file_name + '_' + chrom + '.npy'
+    file_save_name = file_name + '_' + chrom + '.npy'
     graph_save_name = file_name + '_' + chrom + '_graph.npy'
 
     np_chrom_graph = np.array(chrom_graph, dtype=object)
     np.save(graph_save_name, np_chrom_graph)
 
-    #np_chrom_reads = np.array(chrom_reads, dtype=object)
-    #np.save(file_save_name, np_chrom_reads)
+    np_chrom_reads = np.array(chrom_data, dtype=object)
+    np.save(file_save_name, np_chrom_reads)
 
     print_return += ('Total count of ' + chrom + ' tags: ' + str(tag_count))
     return (print_return, tag_count)
@@ -60,8 +60,10 @@ def main(args, file, pool):
     graph_bins_chrom_partial = partial(graph_bins_chrom,file)
     tag_counts = pool.map(graph_bins_chrom_partial, chroms)
     total_tag_count = 0
+    print_return = ""
     for result in tag_counts:
-        print(result[0])
+        print_return += result[0] + '\n'
+        #print(result[0])
         total_tag_count += result[1]
 
-    return total_tag_count
+    return (print_return, total_tag_count)
