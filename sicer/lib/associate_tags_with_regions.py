@@ -33,6 +33,7 @@ def find_readcount_on_islands(island_start_list, island_end_list, tag_position):
     Returns the index of the island on which the tag lands, or -1.
     """
 
+    #print(island_start_list, tag_position)
     index = bisect.bisect_right(island_start_list, tag_position);
     if index - bisect.bisect_left(island_end_list, tag_position) == 1:
         return index - 1;

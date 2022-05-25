@@ -81,7 +81,10 @@ def main(args, chip_library_size, control_library_size, pool):
     genomesize = sum(args.species_chrom_lengths.values());
     genomesize = args.effective_genome_fraction * genomesize;
 
-    print("ChIP library read count:", chip_library_size)
+    if args.paired_end == True:
+        print("ChIP library bins count:", chip_library_size)
+    else:
+        print("ChIP library read count:", chip_library_size)
     print("Control library read count:", control_library_size)
 
     totalchip = 0;
@@ -124,7 +127,7 @@ def main(args, chip_library_size, control_library_size, pool):
                 alpha_stat = p_value_list[index] * total_num_of_pvalue / p_value_rank_array[index];
                 if alpha_stat > 1:
                     alpha_stat = 1;
-                    
+
                 island[i][7] = alpha_stat
                 outputline = (line[0] + '\t' + str(line[1]) + '\t' + str(line[2]) + '\t' + str(line[3]) + '\t' + str(
                     line[4]) + '\t' +

@@ -39,7 +39,7 @@ def main(args, df_run=False):
         temp_dir = tempfile.mkdtemp()
         # Change current working directory to temp_dir
         os.chdir(temp_dir)
-        #print(temp_dir)
+        print(temp_dir)
 
     except:
         sys.exit(
@@ -53,6 +53,7 @@ def main(args, df_run=False):
         if args.paired_end == True:
 
             # Step 1-PE: creating bed windows
+            args.fragment_size = args.bin_size
             print("Creating bed windows based on pre-defined bin size %s (bp)... \n" % args.bin_size)
             create_bed_windows.main(args, pool) #make windows
 
@@ -60,17 +61,18 @@ def main(args, df_run=False):
             treatment_file_name = os.path.basename(args.treatment_file)
             print("Preprocess the", treatment_file_name, "file...\n")
             total_treatment_read_count = separate_bedpe_chroms.main(args, args.treatment_file, pool)
+            args.treatment_file = treatment_file_name
             print('\n')
             # Step 3-PE: Using the control graph file
             if control_lib_exists:
                 control_file_name = os.path.basename(args.control_file)
                 print("Preprocess the", control_file_name, "file...\n")
-                total_control_read_count = separate_bedpe_chroms.main(args, args.treatment_file, pool)
+                total_control_read_count = separate_bedpe_chroms.main(args, args.control_file, pool)
+                args.control_file = control_file_name
                 print('\n')
 
             print("Partition the genome and create graph files\n");
             total_tag_in_windows = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
-            args.treatment_file = treatment_file_name
             total_treatment_read_count = total_tag_in_windows
             print('\n')
 
@@ -117,7 +119,10 @@ def main(args, df_run=False):
             # Step 7: Filter out any significant islands whose pvalue is greater than the false discovery rate
             print("Identify significant islands using FDR criterion\n")
             significant_read_count = filter_islands_by_significance.main(args, 7, pool)  # 7 represents the ith column we want to filtered by
-            print("Out of the ", total_treatment_read_count, " reads in ", treatment_file_name, ", ", significant_read_count, " reads are in significant islands\n")
+            if args.paired_end == True:
+                print("Out of the ", total_treatment_read_count, " bins in ", treatment_file_name, ", ", significant_read_count, " bins are in significant islands\n")
+            else:
+                print("Out of the ", total_treatment_read_count, " reads in ", treatment_file_name, ", ", significant_read_count, " reads are in significant islands\n")
 
         # Optional Outputs
         if args.significant_reads:
@@ -144,4 +149,4 @@ def main(args, df_run=False):
     finally:
         if df_run == False:
             print("Removing temporary directory and all files in it.")
-            shutil.rmtree(temp_dir)
+            #shutil.rmtree(temp_dir)

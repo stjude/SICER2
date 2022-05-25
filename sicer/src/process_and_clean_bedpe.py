@@ -6,8 +6,7 @@ import re
 import numpy as np
 
 def graph_bins_chrom(file, chrom):
-    file_name = os.path.basename(file)
-    file_name = file_name.replace('.bed', '')
+    file_name = file.replace('.bed', '')
     bed_file_name = file_name + '_' + chrom + '.npy'
     new_file_name = file_name + '_' + chrom + '-results.bed'
 
@@ -43,14 +42,14 @@ def graph_bins_chrom(file, chrom):
             chrom_graph.append(output2)
             tag_count += reads[3]
 
-    file_save_name = file_name + '_' + chrom + '.npy'
+    #file_save_name = file_name + '_' + chrom + '.npy'
     graph_save_name = file_name + '_' + chrom + '_graph.npy'
 
     np_chrom_graph = np.array(chrom_graph, dtype=object)
     np.save(graph_save_name, np_chrom_graph)
 
-    np_chrom_reads = np.array(chrom_reads, dtype=object)
-    np.save(file_save_name, np_chrom_reads)
+    #np_chrom_reads = np.array(chrom_reads, dtype=object)
+    #np.save(file_save_name, np_chrom_reads)
 
     print_return += ('Total count of ' + chrom + ' tags: ' + str(tag_count))
     return (print_return, tag_count)
