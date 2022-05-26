@@ -2,10 +2,11 @@
 
 from functools import partial
 import subprocess
+import sys
 
-def create_bed_windows(chrom, chrom_length, bin):
+def create_bed_windows(chrom, chrom_length, bin_size):
     file_save_name = chrom + '.windows'
-    syntax = 'echo "%s\\t%s" > %s.temp ; bedtools makewindows -g %s.temp -w %s > %s ; rm -rf %s.temp' % (chrom, chrom_length, chrom, chrom, bin, file_save_name, chrom)
+    syntax = 'echo "%s\\t%s" > %s.temp ; bedtools makewindows -g %s.temp -w %s > %s ; rm -rf %s.temp' % (chrom, chrom_length, chrom, chrom, bin_size, file_save_name, chrom)
     process = subprocess.Popen(syntax, stdin=subprocess.PIPE, shell=True,)
     process.communicate()
     if process.returncode != 0:

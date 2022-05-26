@@ -1,4 +1,7 @@
-import multiprocessing as mp
+# Author: 2022 STJUDE Modupeore Adetunji
+
+# Separate bed file to individual chromosomes
+
 import os
 import re
 import sys
@@ -14,14 +17,14 @@ def separate_bedpe_chroms(file, chrom):
 
     match = chrom + "[[:space:]]"
     individual_bed = subprocess.Popen(['grep', match, file], stdout=subprocess.PIPE)
-    bed_reads = str(individual_bed.communicate()[0],'utf-8').splitlines()
+    bed_reads = str(individual_bed.communicate()[0], 'utf-8').splitlines()
     read_dtype = np.dtype([('chrom', 'U6'), ('start', np.int32), ('end', np.int32), ('name', 'U20'), ('score', np.int32), ('strand', 'U1')])
     processed_reads = np.empty(len(bed_reads), dtype=read_dtype)
 
     reads_count = 0
     for i, reads in enumerate(bed_reads):
         reads = re.split('\t', reads)
-        if (len(reads) < 6):
+        if len(reads) < 6:
             sys.stderr.write(
                 "Error: Input BED files must have the first six fields. Check " + file_name + " to see if it has the following fields: chrom, chromStart, chromEnd, name, score, and strand\n")
             sys.exit(1)
