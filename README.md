@@ -3,6 +3,15 @@ Redesigned and improved ChIP-seq broad peak calling tool SICER
 
 [![Build Status](https://travis-ci.com/zanglab/SICER2.svg?branch=master)](https://travis-ci.com/zanglab/SICER2)
 
+### Additional Update (STJUDE):
+#### v1.2.0
+Now works in a paired-end aware manner. Indicate data is paired-ended using the `--paired_end | -pe` flag.
+
+The paired-end aware manner takes into account the varying fragment lengths and creates uniform partition frequencies of the genome based on a constant `--bin_size | -b`.
+
+#### v1.1.0
+Removed restriction of select genomes. Allows users to provide genomes chromsizes in a tab-delimited file (can be downloaded from UCSC).
+
 ## Introduction
 Chromatin immunoprecipitation combined with high-throughput sequencing (ChIP-seq) can be used to map binding sites of a protein of interest in the genome. Histone modifications usually occupy broad chromatin domains and result in diffuse patterns in ChIP-seq data that make it difficult to identify signal enrichment. SICER, a spatial clustering approach for the identification of ChIP-enriched regions, was developed for calling broad peaks from ChIP-seq data. 
 
@@ -61,6 +70,9 @@ The number of copies of indentical reads allowed in a library. Default value is 
 ##### -w/--window_size (Optional)
 Resolution of SICER. Default value is 200 (bp)
 
+##### -b/--bin_size (Optional)
+The bin size for uniform genome partitioning of paired end SICER. Default value is 200 (bp)
+
 ##### -f/--fragment_size (Optional)
 The amount of shift from the beginning of a read to the center of the DNA fragment represented by the read.
 Default value is 150 (bp).
@@ -81,6 +93,9 @@ E-value. Requires user input when no control library is provided. Default value 
 
 ##### -o/--output_directory (Optional)
 Path of the directory in which results will be stored. Default output directory is the current working directory.
+
+##### -pe/--paired_end (Optional)
+Paired End Data: This indicates input should be treated as paired ended.
 
 ##### -cpu/--cpu (Optional)
 The number of CPU cores SICER program will use when executing multi-processing tasks. Optimal number of cores is the species' number of chromosomes. Default value is the maximum number of cores avaiable in the system.

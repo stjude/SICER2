@@ -3,6 +3,9 @@
 
 #Author: Jin Yong Yoo
 
+# Modified: 2022 STJUDE Modupeore Adetunji
+# Edited for paired_end data using graph bins
+
 import os
 import sys, errno, warnings
 
@@ -23,7 +26,7 @@ warnings.formatwarning = warning_on_one_line
 
 def main():
     '''The main function/pipeline for SICER'''
-    parser = argparse.ArgumentParser(description='Processing arguments for SICER', usage = "Use --help or -h for more information")
+    parser = argparse.ArgumentParser(description='Processing arguments for SICER', usage="Use --help or -h for more information")
 
     parser.add_argument(
         '--treatment_file',
@@ -73,6 +76,14 @@ def main():
         type=int,
         default=200,
         help='Resolution of SICER. Default value is 200 (bp)'
+    )
+    parser.add_argument(
+        '--bin_size',
+        '-b',
+        required=False,
+        type=int,
+        default=200,
+        help='Paired end SICER bin size. Default value is 200 (bp)'
     )
     parser.add_argument(
         '--fragment_size',
@@ -128,6 +139,15 @@ def main():
     )
 
     parser.add_argument(
+        '--paired_end',
+        '-pe',
+        required=False,
+        default=False,
+        action='store_true',
+        help='Paired End Data: This indicates input should be treated as paired ended.'
+    )
+
+    parser.add_argument(
         '--cpu',
         '-cpu',
         required=False,
@@ -152,84 +172,138 @@ def main():
     )
 
     args = parser.parse_args()
-    setattr(args,'subcommand','SICER')
-    setattr(args,'df',False)
+    setattr(args, 'subcommand', 'SICER')
+    setattr(args, 'df', False)
 
     # Check if argument inputs are valid
-    if not(os.path.isabs(args.treatment_file)):
+    if not os.path.isabs(args.treatment_file):
         args.treatment_file = os.path.join(curr_path, args.treatment_file)
 
-    if (not (Utility.fileExists(args.treatment_file))):
+    if not Utility.fileExists(args.treatment_file):
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), args.treatment_file)
 
-    if (not (args.treatment_file.lower().endswith('.bed')) and not (args.treatment_file.lower().endswith('.bam'))):
-        warnings.warn("Treatment file must be in BED or BAM format.")
+    if (not (args.treatment_file.lower().endswith('.bed')) and not (args.treatment_file.lower().endswith('.bam')) and not (args.treatment_file.lower().endswith('.bedpe'))):
+        warnings.warn("Treatment file must be in BED or BEDPE or BAM format.")
 
     # Checks if the inputs files are in BAM format. If they are, convert them into BED format using bamToBed
     # functionality from bedtools2 (https://github.com/arq5x/bedtools2).
 
+    awk_syntax = 'awk -F\\\\t \'{if($1==$4 && $1~"chr"){ print $1 "\\t" $2 "\\t" $6 "\\t" $7 "\\t" $8 "\\t" $9}}\''
+
     if (args.treatment_file.lower().endswith('.bam')):
-        bed_file_name = args.treatment_file.replace('.bam', '.bed')
-        
+        if (args.paired_end == True):
+            bed_file_name = args.treatment_file.replace('.bam', '.pe.bed')
+            if not Utility.fileExists(bed_file_name):
+                process =  subprocess.Popen("bedtools bamtobed -bedpe -i %s | %s - > %s" % (args.treatment_file, awk_syntax, bed_file_name),
+                                    stdin=subprocess.PIPE,
+                                    shell=True,
+                                    )
+                process.communicate()
+                if process.returncode != 0:
+                    sys.stderr.write("Error: Cannot convert BAMPE file to BED file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+                    sys.exit(1)
+
+            args.treatment_file = bed_file_name
+        else:
+            bed_file_name = args.treatment_file.replace('.bam', '.bed')
+            if not Utility.fileExists(bed_file_name):
+                process =  subprocess.Popen("bedtools bamtobed -i %s > %s" % (args.treatment_file, bed_file_name),
+                                    stdin=subprocess.PIPE,
+                                    shell=True,
+                                    )
+                process.communicate()
+                if process.returncode != 0:
+                    sys.stderr.write("Error: Cannot convert BAM file to BED file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+                    sys.exit(1)
+            args.treatment_file = bed_file_name
+
+    if args.treatment_file.lower().endswith('.bedpe'):
+        args.paired_end == True
+        bed_file_name = args.treatment_file.replace('.bedpe', '.pe.bed')
         if not Utility.fileExists(bed_file_name):
-            process =  subprocess.Popen("bedtools bamtobed -i %s > %s" % (args.treatment_file, bed_file_name),
+            process =  subprocess.Popen("%s %s > %s" % (awk_syntax, args.treatment_file, bed_file_name),
                                 stdin=subprocess.PIPE,
                                 shell=True,
                                 )
             process.communicate()
             if process.returncode != 0:
-                sys.stderr.write("Error: Cannot convert BAM file to BED file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+                sys.stderr.write("Error: Does not recognize BEDPE file provided.\n")
                 sys.exit(1)
         args.treatment_file = bed_file_name
 
-    if (args.control_file is not None):
-        if not(os.path.isabs(args.control_file)):
+    if args.control_file is not None:
+        if not os.path.isabs(args.control_file):
             args.control_file = os.path.join(curr_path, args.control_file)
 
-        if (not (Utility.fileExists(args.control_file))):
+        if not Utility.fileExists(args.control_file):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), args.control_file)
 
-        if (not (args.control_file.lower().endswith('.bed')) and not (args.control_file.lower().endswith('.bam'))):
-            warnings.warn("Treatment file must be in BED or BAM format.")
+        if (not (args.control_file.lower().endswith('.bed')) and not (args.control_file.lower().endswith('.bam')) and not (args.control_file.lower().endswith('.bedpe'))):
+            warnings.warn("Treatment file must be in BED or BEDPE or BAM format.")
 
         if (args.control_file.lower().endswith('.bam')):
-            bed_file_name = args.control_file.replace('.bam', '.bed')
-            
+            if (args.paired_end == True):
+                bed_file_name = args.control_file.replace('.bam', '.pe.bed')
+                if not Utility.fileExists(bed_file_name):
+                    process =  subprocess.Popen("bedtools bamtobed -bedpe -i %s | %s - > %s" % (args.control_file, awk_syntax, bed_file_name),
+                                        stdin=subprocess.PIPE,
+                                        shell=True,
+                                        )
+                    process.communicate()
+                    if process.returncode != 0:
+                        sys.stderr.write("Error: Cannot convert BAMPE file to BED file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+                        sys.exit(1)
+                args.control_file = bed_file_name
+            else:
+                bed_file_name = args.control_file.replace('.bam', '.bed')
+                if not Utility.fileExists(bed_file_name):
+                    process =  subprocess.Popen("bedtools bamtobed -i %s > %s" % (args.control_file, bed_file_name),
+                                        stdin=subprocess.PIPE,
+                                        shell=True,
+                                        )
+                    process.communicate()
+                    if process.returncode != 0:
+                        sys.stderr.write("Error: Cannot convert BAM file to BED file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+                        sys.exit(1)
+                args.control_file = bed_file_name
+
+        if args.control_file.lower().endswith('.bedpe'):
+            args.paired_end == True
+            bed_file_name = args.control_file.replace('.bedpe', '.pe.bed')
             if not Utility.fileExists(bed_file_name):
-                process =  subprocess.Popen("bedtools bamtobed -i %s > %s" % (args.control_file, bed_file_name),
-                                stdin=subprocess.PIPE,
-                                shell=True,
-                                )
+                process =  subprocess.Popen("%s %s > %s" % (awk_syntax, args.control_file, bed_file_name),
+                                    stdin=subprocess.PIPE,
+                                    shell=True,
+                                    )
                 process.communicate()
                 if process.returncode != 0:
-                    sys.stderr.write("Error: Cannot convert BAM file to BED file.\nCheck if bedtools2 (https://github.com/arq5x/bedtools2) has been installed correctly.\n")
+                    sys.stderr.write("Error: Cannot clean BEDPE file.\n")
                     sys.exit(1)
             args.control_file = bed_file_name
 
-    if (not(args.species_chromfile) and not(args.species)):
+    if not args.species_chromfile and not args.species:
         sys.stderr.write("Error: Species information is not provided or not recognized.\n")
         sys.exit(1)
 
-    if (args.species_chromfile is not None):
-        if (not (Utility.fileExists(args.species_chromfile))):
+    if args.species_chromfile is not None:
+        if not Utility.fileExists(args.species_chromfile):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), args.species_chromfile)
             sys.exit(1)
         args.species_chroms, args.species_chrom_lengths = Utility.chroms_sizes(args.species_chromfile)
 
-    if (args.species_chromfile is None):
-        if (not (args.species in GenomeData.species_chroms.keys())):
+    if args.species_chromfile is None:
+        if not args.species in GenomeData.species_chroms.keys():
             sys.stderr.write("Error: Species " + args.species + " not recognized.\n")
             sys.exit(1)
         else:
             args.species_chroms = GenomeData.species_chroms[args.species]
             args.species_chrom_lengths = GenomeData.species_chrom_lengths[args.species]
 
-    if (not (args.effective_genome_fraction <= 1 and args.effective_genome_fraction >= 0)):
+    if not args.effective_genome_fraction <= 1 and args.effective_genome_fraction >= 0:
         sys.stderr.write("Error: Effective genome fraction must be a value between 0 and 1.\n")
         sys.exit(1)
 
-
-    if (args.gap_size % args.window_size != 0):
+    if args.gap_size % args.window_size != 0:
         sys.stderr.write("Error: Gap size is not a multiple of window size.\n")
         sys.exit(1)
 
@@ -240,7 +314,7 @@ def main():
             sys.stderr.write("Error: Gap size is not a multiple of window size.\n" % args.output_directory)
             sys.exit(1)
 
-    if not(os.path.isabs(args.output_directory)):
+    if not os.path.isabs(args.output_directory):
         args.output_directory = os.path.join(curr_path, args.output_directory)
 
     if args.cpu > cpu_available:

@@ -2,6 +2,8 @@
 
 # Modified by: Jin Yong Yoo
 
+# Modified: 2022 STJUDE Modupeore Adetunji
+
 import multiprocessing as mp
 import os
 from functools import partial
@@ -22,7 +24,7 @@ def associate_tag_count_to_regions(args, scaling_factor, control_library_size, g
     island_list = np.load(island_file, allow_pickle=True)
     island_start_list = [island[1] for island in island_list]
     island_end_list = [island[2] for island in island_list]
-    
+
     pvalue_array = np.empty(len(island_list), dtype=np.float64)
 
     total_chip_count = 0
@@ -81,8 +83,12 @@ def main(args, chip_library_size, control_library_size, pool):
     genomesize = sum(args.species_chrom_lengths.values());
     genomesize = args.effective_genome_fraction * genomesize;
 
-    print("ChIP library read count:", chip_library_size)
-    print("Control library read count:", control_library_size)
+    if args.paired_end == True:
+        print("ChIP library bins count:", chip_library_size)
+        print("Control library bins count:", control_library_size)
+    else:
+        print("ChIP library read count:", chip_library_size)
+        print("Control library read count:", control_library_size)
 
     totalchip = 0;
     totalcontrol = 0;
@@ -124,7 +130,7 @@ def main(args, chip_library_size, control_library_size, pool):
                 alpha_stat = p_value_list[index] * total_num_of_pvalue / p_value_rank_array[index];
                 if alpha_stat > 1:
                     alpha_stat = 1;
-                    
+
                 island[i][7] = alpha_stat
                 outputline = (line[0] + '\t' + str(line[1]) + '\t' + str(line[2]) + '\t' + str(line[3]) + '\t' + str(
                     line[4]) + '\t' +
@@ -135,5 +141,9 @@ def main(args, chip_library_size, control_library_size, pool):
 
             np.save(island_file_name, island)
 
-    print("Total number of chip reads on islands is:", totalchip)
-    print("Total number of control reads on islands is:", totalcontrol)
+    if args.paired_end == True:
+        print("Total number of chip bins on islands is:", totalchip)
+        print("Total number of control bins on islands is:", totalcontrol)
+    else:
+        print("Total number of chip reads on islands is:", totalchip)
+        print("Total number of control reads on islands is:", totalcontrol)
