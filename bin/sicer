@@ -239,7 +239,7 @@ def main():
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), args.control_file)
 
         if (not (args.control_file.lower().endswith('.bed')) and not (args.control_file.lower().endswith('.bam')) and not (args.control_file.lower().endswith('.bedpe'))):
-            warnings.warn("Treatment file must be in BED or BEDPE or BAM format.")
+            warnings.warn("Control file must be in BED or BEDPE or BAM format.")
 
         if (args.control_file.lower().endswith('.bam')):
             if (args.paired_end == True):
