@@ -43,7 +43,7 @@ def associate_tag_count_to_regions(args, scaling_factor, control_library_size, g
     for read in control_reads:
         position = associate_tags_with_regions.tag_position(read, args.fragment_size)
         index = associate_tags_with_regions.find_readcount_on_islands(island_start_list, island_end_list, position)
-        if index >= 0:
+        if index >= 0:  # if the read is found in a valid island
             island_control_readcount_list[index] += 1
             total_control_count += 1
 

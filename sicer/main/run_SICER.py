@@ -57,11 +57,11 @@ def main(args, df_run=False):
             # Step 1-PE: creating bed windows
             args.fragment_size = args.bin_size
             print("Creating bed windows based on pre-defined bin size %s (bp)... \n" % args.bin_size)
-            create_bed_windows.main(args, pool) #make windows
+            create_bed_windows.main(args, pool) #make windows based on bin size
 
             # Step 2-PE: Preprocess pe.bed file
             treatment_file_name = os.path.basename(args.treatment_file)
-            print("Preprocess the", treatment_file_name, "file...\n")
+            print("Preprocess the", treatment_file_name, "file...\n") #separate bed to individual chroms
             total_treatment_read_count = separate_bedpe_chroms.main(args, args.treatment_file, pool)
             args.treatment_file = treatment_file_name
             print('\n')
@@ -70,17 +70,16 @@ def main(args, df_run=False):
             if control_lib_exists:
                 control_file_name = os.path.basename(args.control_file)
                 print("Preprocess the", control_file_name, "file...\n")
-                total_control_read_count = separate_bedpe_chroms.main(args, args.control_file, pool)
+                total_control_read_count = separate_bedpe_chroms.main(args, args.control_file, pool) #separate bed to individual chroms
                 args.control_file = control_file_name
 
-                results = process_and_clean_bedpe.main(args, args.control_file, pool) #bedpe to graph
+                results = process_and_clean_bedpe.main(args, args.control_file, pool) #convert chroms to bins and count reads in bin region, and create the graph file of the reads count
                 total_control_read_count = results[1]
                 print('\n')
 
             # Step 3-PE: Converting the bedpe to graph windows
             print("Partition the genome and create graph files\n");
             results = process_and_clean_bedpe.main(args, args.treatment_file, pool) #bedpe to graph
-            print(results[0])
             total_tag_in_windows = results[1]
             total_treatment_read_count = results[1]
             print('\n')
@@ -159,4 +158,5 @@ def main(args, df_run=False):
     finally:
         if df_run == False:
             print("Removing temporary directory and all files in it.")
+            #os.system("pwd")
             shutil.rmtree(temp_dir)

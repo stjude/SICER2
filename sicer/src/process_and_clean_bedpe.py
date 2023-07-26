@@ -25,7 +25,9 @@ def graph_bins_chrom(file, chrom):
 
     windows = chrom + '.windows'
     graph_reads = subprocess.Popen(['bedtools', 'intersect', '-c', '-a', windows, '-b', new_file_name], stdout=subprocess.PIPE)
+    data_reads = subprocess.Popen(['bedtools', 'intersect', '-c', '-b', windows, '-a', new_file_name], stdout=subprocess.PIPE)
     chrom_reads = str(graph_reads.communicate()[0], 'utf-8').splitlines()
+    chrom_datas = str(data_reads.communicate()[0], 'utf-8').splitlines()
 
     chrom_graph = []
     chrom_data = []
@@ -36,11 +38,20 @@ def graph_bins_chrom(file, chrom):
         reads[2] = int(reads[2])
         reads[3] = int(reads[3])
         if reads[3] > 0:
-            output1 = (chrom, reads[1], reads[2], 'placeholder', '255', '+')
-            output2 = (chrom, reads[1], reads[2], reads[3])
-            chrom_data.append(output1)
-            chrom_graph.append(output2)
+            output = (chrom, reads[1], reads[2], reads[3])
+            chrom_graph.append(output)
             tag_count += reads[3]
+
+    for i, reads in enumerate(chrom_datas):
+        reads = re.split('\t', reads)
+        reads[1] = int(reads[1])
+        reads[2] = int(reads[2])
+        reads[6] = int(reads[6])
+        if reads[6] > 0:
+            output = (chrom, reads[1], reads[2], reads[3], reads[4], reads[5], reads[6])
+            chrom_data.append(output)
+
+
 
     file_save_name = file_name + '_' + chrom + '.npy'
     graph_save_name = file_name + '_' + chrom + '_graph.npy'
