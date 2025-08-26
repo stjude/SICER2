@@ -18,7 +18,7 @@ def separate_bedpe_chroms(file, chrom):
     match = chrom + "[[:space:]]"
     individual_bed = subprocess.Popen(['grep', match, file], stdout=subprocess.PIPE)
     bed_reads = str(individual_bed.communicate()[0], 'utf-8').splitlines()
-    read_dtype = np.dtype([('chrom', 'U6'), ('start', np.int32), ('end', np.int32), ('name', 'U20'), ('score', np.int32), ('strand', 'U1')])
+    read_dtype = np.dtype([('chrom', 'U32'), ('start', np.int32), ('end', np.int32), ('name', 'U50'), ('score', np.int32), ('strand', 'U1')])
     processed_reads = np.empty(len(bed_reads), dtype=read_dtype)
 
     reads_count = 0
