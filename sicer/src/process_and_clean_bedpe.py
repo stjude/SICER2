@@ -13,13 +13,7 @@ def graph_bins_chrom(file, chrom):
     print_return = ""
     chrom_reads = np.load(bed_file_name, allow_pickle=True)
     with open(new_file_name, 'w') as outfile:
-        for read in chrom_reads:
-            chrom = read[0]
-            start = read[1]
-            end = read[2]
-            name = read[3]
-            score = read[4]
-            strand = read[5]
+        for chrom, start, end, name, score, strand in chrom_reads:
             line = (chrom + '\t' + str(start) + '\t' + str(end) + '\t' + name + '\t' + str(score) + '\t' + strand + '\n')
             outfile.write(line)
 

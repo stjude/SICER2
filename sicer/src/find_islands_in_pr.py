@@ -14,8 +14,8 @@ import numpy as np
 from sicer.lib import Background_island_probscore_statistics
 
 """
-Take in coords for bed_gaph type summary files and find 'islands' of modifications.
-There are a number options here that can be turned on or off depending on need
+Take in coords for bed_graph type summary files and find 'islands' of modifications.
+There are a number of options here that can be turned on or off depending on need
 Right now:
 
 (1) scan for all 'islands' where the single window or consecutive
