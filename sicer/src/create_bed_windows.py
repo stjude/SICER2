@@ -22,9 +22,9 @@ def main(args, pool):
     for i, chrom in enumerate(chroms):
         if chrom in chrom_lengths.keys():
             chrom_length = chrom_lengths[chrom]
+            list_of_args.append((chrom, chrom_length, args.bin_size))
         else:
             print("Can not find the length of ", chrom)
-        list_of_args.append((chrom, chrom_length, args.bin_size))
 
     create_bed_windows_partial = partial(create_bed_windows)
     pool.starmap(create_bed_windows_partial, list_of_args)
